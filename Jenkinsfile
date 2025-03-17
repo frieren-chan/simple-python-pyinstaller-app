@@ -26,6 +26,11 @@ pipeline {
                 }
             }
         }
+        stage('Manual Approval') {
+            steps {
+                input "Lanjutkan ke tahap Deploy?"
+            }
+        }
         stage('Deploy') {
             agent any
             environment {
