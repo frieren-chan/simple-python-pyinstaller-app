@@ -26,5 +26,22 @@ pipeline {
                 }
             }
         }
+        stage('Deploy') {
+            agent any
+            environment {
+                VOLUME = '$(pwd)/sources:/src'
+                IMAGE = 'cdrx/pyinstaller-linux:python2'
+            }
+            steps {
+                sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
+                sleep(time: 60, unit: 'SECONDS')
+            }
+            post {
+                success {
+                    archiveArtifacts 'sources/dist/add2vals'
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                }
+            }
+        }
     }
 }
